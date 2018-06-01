@@ -13,7 +13,7 @@ module AwesomeHstoreTranslate
 
           translated_attrs.each do |key, value|
             if value.is_a?(String)
-              query.where!(":value = any(avals(#{key}))", value: value)
+              query.where!(":value = any(avals(#{get_column_name(key)}))", value: value)
             else
               super
             end
@@ -46,7 +46,7 @@ module AwesomeHstoreTranslate
           end
 
           translated_attrs.each do |key, value|
-            query.order!("#{key} -> '#{I18n.locale.to_s}' #{value}")
+            query.order!("#{get_column_name(key)} -> '#{I18n.locale.to_s}' #{value}")
           end
 
           query
@@ -56,6 +56,14 @@ module AwesomeHstoreTranslate
       end
 
       private
+
+      def get_column_name(attr)
+        column_name = attr.to_s
+        # detect column from original hstore_translate
+        column_name << '_translations' if !has_attribute?(column_name) && has_attribute?("#{column_name}_translations")
+
+        column_name
+      end
 
       def translated_attributes(opts)
         opts.select{ |key, _| self.translated_attribute_names.include?(key) }
