@@ -60,7 +60,9 @@ module AwesomeHstoreTranslate
       def get_column_name(attr)
         column_name = attr.to_s
         # detect column from original hstore_translate
-        column_name << '_translations' if !has_attribute?(column_name) && has_attribute?("#{column_name}_translations")
+        old_column_name = "#{column_name}_translations"
+
+        return old_column_name if !has_attribute?(column_name) && has_attribute?(old_column_name)
 
         column_name
       end
