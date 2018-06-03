@@ -68,11 +68,11 @@ module AwesomeHstoreTranslate
       end
 
       def translated_attributes(opts)
-        opts.select{ |key, _| self.translated_attribute_names.include?(key.to_sym) }
+        opts.select{ |key, _| self.translated_attribute_names.include?(key.try(:to_sym) ? key.to_sym : key) }
       end
 
       def untranslated_attributes(opts)
-        opts.reject{ |key, _| self.translated_attribute_names.include?(key.to_sym) }
+        opts.reject{ |key, _| self.translated_attribute_names.include?(key.try(:to_sym) ? key.to_sym : key) }
       end
     end
   end
